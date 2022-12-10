@@ -1,0 +1,53 @@
+---
+title: "Rapport sur les jeux de donnees credit bancaire"
+author: "Bernadin Ritza"
+date: "2022-12-09"
+output: word_document
+---
+
+
+## Importation de donnees creditbancire.CSV
+
+```{r donnees}
+br=read.csv("CreditBancaire.csv")
+attach(br)
+```
+
+## Regression du nombre nbre de jours de retards sur les variables Credit et type
+
+```{r regression}
+reg=lm(Jours ~ Credit + Type, data=br)
+reg
+```
+
+## Resultats detailles de la regression
+```{r resultats}
+summary(reg)
+```
+
+## Affichage du tableau des coefficients incluant les stat de student et les probabilites)
+```{r tableau}
+summary(reg)$coefficient[ ,3]
+summary(reg)$coefficient[ ,4]
+```
+## Affichage des deux colonnes des coefficients estimes et des valeurs de la stat de student
+```{r coefficient}
+summary(reg)$coefficient[ ,1]
+summary(reg)$coefficient[ ,3]
+```
+## Graphique de nuage de point et de la droite de regression
+les graphiques que nous allons construire dans cette partie aident a examiner dans quelle mesure deux ou plusieurs variables sont correlees.
+```{r nuage}
+ plot(br$Credit, br$Jours, main = "Droite de regression (Jours et credit)", 
+      xLab= "Credit", ylab="Jours", pch = 20)
+abline(lm(Jours~Credit, data= br), col ="red")
+```
+
+##fonction qui vous permet de régresser une variable y sur une autre notée x
+```{r fonction}
+fsummary<- function(data){
+  S=summary(lm(y~.,data=data))
+  extract.estimate=S$coefficients[ , 1]
+  extract.student=S$coefficients[ , 3]
+  return(data.frame(extract.estimate,extract.student))
+}
